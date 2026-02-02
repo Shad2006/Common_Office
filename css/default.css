@@ -1,0 +1,217 @@
+﻿body {
+    font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    background-color: #1C1C1C;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* App Header */
+.app-header {
+    background-color: #0078D4;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 100;
+    position: relative;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 20px;
+}
+
+.app-title {
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.user-profile {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+/* SplitView */
+.root-splitview {
+    height: calc(100vh - 48px);
+}
+
+.splitview-pane {
+    background-color: #171717;
+    width: 250px;
+    border-right: 1px solid #2B2B2B;
+}
+
+.splitview-header {
+    padding: 20px;
+    border-bottom: 1px solid #2B2B2B;
+}
+
+    .splitview-header h2 {
+        margin: 0;
+        font-weight: 300;
+        font-size: 18px;
+        opacity: 0.8;
+    }
+
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .list-item:hover {
+        background-color: #2B2B2B;
+    }
+
+    .list-item[aria-selected="true"] {
+        background-color: #005A9E;
+        color: #FFFFFF;
+    }
+
+    .list-item .win-icon {
+        margin-right: 12px;
+        font-size: 20px;
+    }
+
+.splitview-content {
+    background-color: #1C1C1C;
+    padding: 20px;
+    overflow: auto;
+}
+
+/* Content Host */
+#contentHost {
+    height: 100%;
+}
+
+/* AppBar customization */
+#appBar {
+    background-color: #2B2B2B;
+}
+
+/* Settings Flyout */
+.win-settings-section {
+    padding: 20px;
+}
+
+    .win-settings-section h3 {
+        margin-top: 0;
+        font-weight: 300;
+    }
+
+    .win-settings-section label {
+        display: block;
+        margin-bottom: 8px;
+        opacity: 0.8;
+    }
+
+    .win-settings-section select,
+    .win-settings-section input[type="text"] {
+        background-color: #2B2B2B;
+        border: 1px solid #404040;
+        color: white;
+        padding: 8px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+/* UWP Controls */
+.win-button {
+    background-color: #005A9E;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+    .win-button:hover {
+        background-color: #106EBE;
+    }
+
+.win-textbox {
+    background-color: #2B2B2B;
+    border: 1px solid #404040;
+    color: white;
+    padding: 8px;
+}
+
+.win-checkbox {
+    margin-bottom: 10px;
+}
+
+/* Template preview */
+.template-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.template-card {
+    background: #2B2B2B;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .template-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+.template-thumbnail {
+    height: 120px;
+    background: #0078D4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+}
+
+.template-info {
+    padding: 12px;
+}
+
+.template-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.template-desc {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .splitview-pane {
+        width: 200px;
+    }
+
+    .template-preview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

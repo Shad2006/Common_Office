@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Publisher</title>
+    <link href="../css/publisher.css" rel="stylesheet" />
+    <script src="../js/publisher.js"></script>
+</head>
+<body class="win-type-body publisher-app">
+    <div class="publisher-container">
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <select class="win-dropdown" id="fontFamily">
+                    <option>Segoe UI</option>
+                    <option>Arial</option>
+                    <option>Times New Roman</option>
+                    <option>Georgia</option>
+                    <option>Calibri</option>
+                </select>
+                <select class="win-dropdown" id="fontSize">
+                    <option>8</option>
+                    <option>10</option>
+                    <option>12</option>
+                    <option>14</option>
+                    <option>16</option>
+                    <option>18</option>
+                    <option>24</option>
+                    <option>32</option>
+                </select>
+                <button class="toolbar-button" data-command="bold" title="Жирный">
+                    <span class="win-icon" style="font-weight:900;">Ж</span>
+                </button>
+                <button class="toolbar-button" data-command="italic" title="Курсив">
+                    <span class="win-icon" style="font-style: italic;">К</span>
+                </button>
+                <button class="toolbar-button" data-command="underline" title="Подчеркивание">
+                    <span class="win-icon" style="text-decoration: underline">Ч</span>
+                </button>
+                <input type="color" id="textColor" class="color-picker" title="Цвет текста" />
+                <input type="color" id="backgroundColor" class="color-picker" title="Цвет фона" />
+            </div>
+
+            <div class="toolbar-group">
+                <button class="toolbar-button" data-command="insertImage" title="Вставить изображение">
+                    <span class="win-icon" style="font-family:'Wingdings'"></span>
+                </button>
+                <button class="toolbar-button" data-command="insertTable" title="Вставить таблицу">
+                    <span class="win-icon"></span>
+                </button>
+                <button class="toolbar-button" data-command="printPreview" title="Предпросмотр печати">
+                    <span class="win-icon"></span>
+                </button>
+            </div>
+        </div>
+        <div class="publisher-content">
+            <div class="templates-panel">
+                <h3>Шаблоны</h3>
+                <div class="templates-list">
+                    <div class="template-item" data-template="brochure">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Брошюра</div>
+                    </div>
+                    <div class="template-item" data-template="flyer">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Листовка</div>
+                    </div>
+                    <div class="template-item" data-template="booklet">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Буклет</div>
+                    </div>
+                    <div class="template-item" data-template="businesscard">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Визитка</div>
+                    </div>
+                    <div class="template-item" data-template="certificate">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Сертификат</div>
+                    </div>
+                    <div class="template-item" data-template="postcard">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Открытка</div>
+                    </div>
+                    <div class="template-item" data-template="calendar">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Календарь</div>
+                    </div>
+                    <div class="template-item" data-template="menu">
+                        <div class="template-icon"></div>
+                        <div class="template-name">Меню</div>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-container">
+                <div class="page-controls">
+                    <button id="prevPage">←</button>
+                    <span id="pageInfo">Страница 1 из 1</span>
+                    <button id="nextPage">→</button>
+                    <button id="addPage">+ Добавить страницу</button>
+                </div>
+
+                <div class="editor-area" id="publicationEditor" contenteditable="true">
+                </div>
+            </div>
+            <div class="properties-panel">
+                <h3>Свойства</h3>
+                <div class="property-group">
+                    <label>Размер страницы:</label>
+                    <select id="pageSize">
+                        <option>A4 (210×297 мм)</option>
+                        <option>A5 (148×210 мм)</option>
+                        <option>A6 (105×148 мм)</option>
+                        <option>Letter (216×279 мм)</option>
+                        <option>Business Card (90×50 мм)</option>
+                    </select>
+                </div>
+
+                <div class="property-group">
+                    <label>Ориентация:</label>
+                    <div>
+                        <input type="radio" id="portrait" name="orientation" checked />
+                        <label for="portrait">Книжная</label>
+                        <input type="radio" id="landscape" name="orientation" />
+                        <label for="landscape">Альбомная</label>
+                    </div>
+                </div>
+
+                <div class="property-group">
+                    <label>Поля (мм):</label>
+                    <input type="number" id="marginTop" value="20" min="0" /> Верх
+                    <input type="number" id="marginBottom" value="20" min="0" /> Низ
+                    <input type="number" id="marginLeft" value="20" min="0" /> Слева
+                    <input type="number" id="marginRight" value="20" min="0" /> Справа
+                </div>
+
+                <div class="property-group">
+                    <label>Колонки:</label>
+                    <input type="number" id="columns" value="1" min="1" max="4" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/publisher.js"></script>
+</body>
+</html>

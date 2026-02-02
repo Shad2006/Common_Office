@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Текстовый процессор</title>
+    <link href="/css/word-processor.css" rel="stylesheet" />
+</head>
+<body class="win-type-body">
+    <div class="word-processor-container">
+        <div class="toolbar">
+            
+            <div class="toolbar-group">
+                <select class="win-dropdown" id="fontFamily">
+                    <option>Times New Roman</option>
+                    <option>Arial</option>
+                    <option>Calibri</option>
+                </select>
+                <select class="win-dropdown" id="fontSize">
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                    <option>11</option>
+                    <option>12</option>
+                    <option>14</option>
+                    <option>16</option>
+                    <option>18</option>
+                    <option>20</option>
+                </select>
+                <button class="toolbar-button" style="font-weight: bold;" data-command="bold">Ж</button>
+                <button class="toolbar-button" style="font-style: initial;" data-command="italic">К</button>
+                <button class="toolbar-button" style="text-decoration: underline;" data-command="underline">Ч</button>
+                <button class="toolbar-button" style="text-decoration: inherit;" data-command="strikeThrough">З</button>
+                <button class="toolbar-button" data-command="superscript">X²</button>
+                <button class="toolbar-button" data-command="subscript">X₂</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-button" data-command="justifyLeft"></button>
+                <button class="toolbar-button" data-command="justifyCenter">⎢</button>
+                <button class="toolbar-button" data-command="justifyRight">⎣</button>
+                <button class="toolbar-button" data-command="justifyFull">⎦</button>
+            </div>
+            <div class="toolbar-group">
+                <input type="color" class="color-picker" id="textColor">
+                <input type="color" class="color-picker" id="backgroundColor">
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-button" id="insertTable">Таблица</button>
+                <button class="toolbar-button" id="insertImage">Изображение</button>
+                <button class="toolbar-button" id="insertSymbol">Символ</button>
+                <button class="toolbar-button" id="wordArt">WordArt</button>
+            </div>
+        </div>
+
+        <div class="document-container">
+            <div class="document-area" id="documentEditor" contenteditable="true">
+                <p>Начните ввод текста здесь...</p>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="win-type-subheader">Стили абзацев</h3>
+                <div class="style-list">
+                    <div class="style-item" data-style="normal">Обычный</div>
+                    <div class="style-item" data-style="heading1">Заголовок 1</div>
+                    <div class="style-item" data-style="heading2">Заголовок 2</div>
+                    <div class="style-item" data-style="quote">Цитата</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="win-type-subheader">Отступы</h3>
+                <div class="indent-controls">
+                    <label>Слева: <input type="number" id="leftIndent" value="0"></label>
+                    <label>Справа: <input type="number" id="rightIndent" value="0"></label>
+                    <label>Первая строка: <input type="number" id="firstLineIndent" value="0"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

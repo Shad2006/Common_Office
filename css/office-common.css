@@ -1,0 +1,415 @@
+﻿/* Основные стили */
+body {
+    font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    background-color: #1C1C1C;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Шапка приложения - как у Publisher */
+.app-header {
+    background-color: #0078D4;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 100;
+    position: relative;
+}
+
+.app-logo {
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 30px;
+    white-space: nowrap;
+}
+
+/* Переключатель приложений - стиль как кнопки Publisher */
+.app-switcher {
+    display: flex;
+    gap: 2px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 2px;
+    flex-grow: 1;
+    max-width: 700px;
+    overflow-x: auto;
+}
+
+.app-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    font-size: 14px;
+    opacity: 0.8;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+    .app-tab:hover {
+        background: rgba(255,255,255,0.1);
+        opacity: 1;
+    }
+
+    .app-tab.active {
+        background: rgba(255,255,255,0.15);
+        opacity: 1;
+        font-weight: 500;
+    }
+
+.app-title {
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: auto;
+    padding-left: 20px;
+    opacity: 0.9;
+    white-space: nowrap;
+    border-left: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Основной контейнер */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 48px);
+}
+
+/* Панель инструментов ПРИЛОЖЕНИЯ (верхняя) */
+#appBar {
+    background: #2B2B2B;
+    padding: 8px 20px;
+    border-bottom: 1px solid #404040;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    min-height: 52px;
+    box-sizing: border-box;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 20px;
+    border-right: 1px solid #404040;
+}
+
+    .toolbar-group:last-child {
+        border-right: none;
+    }
+
+/* Контейнер содержимого */
+.content-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background: #1C1C1C;
+}
+
+/* ОБЩИЕ КНОПКИ (внизу) */
+.common-toolbar {
+    background: #171717;
+    padding: 8px 20px;
+    border-top: 1px solid #2B2B2B;
+    display: flex;
+    gap: 12px;
+    min-height: 52px;
+    box-sizing: border-box;
+    z-index: 90;
+    position: relative;
+}
+
+/* Контекстное меню */
+.context-menu {
+    position: absolute;
+    background: #2B2B2B;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 1000;
+    min-width: 180px;
+}
+
+.context-menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+    .context-menu-item:hover {
+        background: #404040;
+    }
+
+/* Статус бар */
+.status-bar {
+    background: #171717;
+    padding: 6px 20px;
+    border-top: 1px solid #2B2B2B;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.8;
+    min-height: 32px;
+    box-sizing: border-box;
+}
+
+#statusMessage {
+    flex: 1;
+}
+
+#documentInfo {
+    text-align: right;
+}
+
+/* === СТИЛИ ДЛЯ ТЕКСТОВОГО ПРОЦЕССОРА (как у Publisher) === */
+.word-processor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+    /* Панель инструментов текстового процессора */
+    .word-processor-container .toolbar {
+        background: #2B2B2B;
+        padding: 8px 20px;
+        border-bottom: 1px solid #404040;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Основное содержимое текстового процессора */
+    .word-processor-container .document-container {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+    }
+
+    /* Область документа */
+    .word-processor-container .document-area {
+        flex: 1;
+        padding: 40px;
+        background: white;
+        color: black;
+        overflow: auto;
+        outline: none;
+        line-height: 1.5;
+        margin: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        min-height: 500px;
+    }
+
+    /* Боковая панель */
+    .word-processor-container .sidebar {
+        width: 250px;
+        background: #171717;
+        border-left: 1px solid #2B2B2B;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+/* === КНОПКИ И ЭЛЕМЕНТЫ УПРАВЛЕНИЯ === */
+/* UWP Controls */
+.win-button {
+    background-color: #005A9E;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+    .win-button:hover {
+        background-color: #106EBE;
+    }
+
+.win-textbox {
+    background-color: #2B2B2B;
+    border: 1px solid #404040;
+    color: white;
+    padding: 8px;
+}
+
+.win-checkbox {
+    margin-bottom: 10px;
+}
+.toolbar-button {
+    background: #404040;
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+    .toolbar-button:hover {
+        background: #505050;
+    }
+
+.win-dropdown {
+    background: #404040;
+    border: 1px solid #505050;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 2px;
+    height: 32px;
+    min-width: 120px;
+}
+
+.color-picker {
+    width: 32px;
+    height: 32px;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    padding: 2px;
+}
+
+/* Стили для боковой панели */
+.sidebar-section {
+    margin-bottom: 24px;
+}
+
+    .sidebar-section h3 {
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0 0 12px 0;
+        opacity: 0.8;
+    }
+
+.style-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.style-item {
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+    .style-item:hover {
+        background: #404040;
+    }
+
+.indent-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .indent-controls label {
+        font-size: 13px;
+        opacity: 0.8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .indent-controls input {
+        width: 60px;
+        background: #404040;
+        border: 1px solid #555;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 1024px) {
+    .app-switcher {
+        max-width: 500px;
+    }
+
+    .app-tab span:last-child {
+        display: none;
+    }
+
+    .word-processor-container .sidebar {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-switcher {
+        max-width: 400px;
+    }
+
+    .app-title {
+        display: none;
+    }
+
+    .word-processor-container .sidebar {
+        display: none;
+    }
+
+    .word-processor-container .document-area {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .toolbar-group {
+        padding-right: 10px;
+        gap: 4px;
+    }
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2B2B2B;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #505050;
+    border-radius: 5px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #606060;
+    }
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#appContainer > * {
+    animation: slideIn 0.3s ease-out;
+}

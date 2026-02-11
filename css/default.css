@@ -108,8 +108,6 @@
 #appBar {
     background-color: #2B2B2B;
 }
-
-/* Settings Flyout */
 .win-settings-section {
     padding: 20px;
 }
@@ -159,8 +157,6 @@
 .win-checkbox {
     margin-bottom: 10px;
 }
-
-/* Template preview */
 .template-preview {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

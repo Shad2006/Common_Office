@@ -1,34 +1,24 @@
-﻿// Ядро Office Suite UWP
-class OfficeSuiteCore {
+﻿class OfficeSuiteCore {
     constructor() {
         this.currentApp = 'word-processor';
         this.documentManager = new DocumentManager();
         this.fileSystem = new FileSystem();
         this.init();
     }
-
     async init() {
-        // Ждем полной загрузки DOM
         if (document.readyState === 'loading') {
             await new Promise(resolve => {
                 document.addEventListener('DOMContentLoaded', resolve);
             });
         }
-
         await this.setupNavigation();
         this.setupAppSwitcher();
         this.setupFileOperations();
         await this.loadApp(this.currentApp);
     }
-
     async setupNavigation() {
-        // Ждем появления элементов навигации
         await this.waitForElement('.app-switcher .app-tab');
-
-        // Навигация между приложениями
         const tabs = document.querySelectorAll('.app-switcher .app-tab');
-        console.log('Найдено вкладок:', tabs.length);
-
         tabs.forEach(tab => {
             tab.addEventListener('click', (e) => {
                 const appName = e.currentTarget.dataset.app;
@@ -37,22 +27,17 @@ class OfficeSuiteCore {
             });
         });
     }
-
     setupAppSwitcher() {
-        // AppBar и меню
         this.setupAppBar();
         this.setupContextMenu();
     }
-
     setupFileOperations() {
-        // Обработчики для файловых операций
         this.setupButton('#newFile', () => this.newDocument());
         this.setupButton('#openFile', () => this.openDocument());
         this.setupButton('#saveFile', () => this.saveDocument());
         this.setupButton('#saveAsFile', () => this.saveAsDocument());
         this.setupButton('#printFile', () => this.printDocument());
     }
-
     setupButton(selector, handler) {
         const button = document.querySelector(selector);
         if (button) {
@@ -61,71 +46,44 @@ class OfficeSuiteCore {
             console.warn('Кнопка не найдена:', selector);
         }
     }
-
     async switchApp(appName) {
         if (this.currentApp === appName) return;
-
-        console.log('Переключение с', this.currentApp, 'на', appName);
-
-        // Сохраняем текущее состояние
         await this.saveAppState();
-
-        // Переключаем приложение
         this.currentApp = appName;
         await this.loadApp(appName);
-
-        // Обновляем UI
         this.updateAppSwitcher();
     }
-
     async loadApp(appName) {
         try {
-            console.log('Загрузка приложения:', appName);
-
-            // Загружаем HTML приложения
             const response = await fetch(`html/${appName}.html`);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-
             const html = await response.text();
-
-            // Вставляем в контейнер
             const appContainer = document.getElementById('appContainer');
             if (!appContainer) {
                 throw new Error('Контейнер приложений не найден');
             }
-
             appContainer.innerHTML = html;
-
-            // Загружаем CSS
             this.loadAppCSS(appName);
-
-            // Загружаем JS приложения
             await this.loadAppScript(appName);
-
-            // Инициализируем приложение
             const appInstanceName = `${this.camelCase(appName)}App`;
             if (window[appInstanceName] && typeof window[appInstanceName].init === 'function') {
                 await window[appInstanceName].init();
             } else {
                 console.warn('Приложение не имеет метода init:', appInstanceName);
             }
-
-            console.log(`Приложение ${appName} успешно загружено`);
-        } catch (error) {
+     } catch (error) {
             console.error('Ошибка загрузки приложения:', error);
             this.showError(`Не удалось загрузить ${appName}: ${error.message}`);
         }
     }
-
     camelCase(str) {
         return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
     }
-
     loadAppCSS(appName) {
         const oldStyles = document.querySelectorAll('link[data-app-style]');
-        oldStyles.forEach(style => style.remove());
+        //oldStyles.forEach(style => style.remove());
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = `css/${appName}.css`;
@@ -141,11 +99,8 @@ class OfficeSuiteCore {
 
     loadAppScript(appName) {
         return new Promise((resolve, reject) => {
-            // Удаляем старые скрипты
             const oldScripts = document.querySelectorAll('script[data-app-script]');
             oldScripts.forEach(script => script.remove());
-
-            // Динамически загружаем JS
             const script = document.createElement('script');
             script.src = `js/${appName}.js`;
             script.dataset.appScript = 'true';
@@ -160,8 +115,6 @@ class OfficeSuiteCore {
             document.head.appendChild(script);
         });
     }
-
-    // Файловые операции
     async newDocument() {
         const appInstance = this.getCurrentAppInstance();
         if (appInstance && typeof appInstance.newDocument === 'function') {
@@ -174,16 +127,13 @@ class OfficeSuiteCore {
     async openDocument() {
         try {
             const picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.fileTypeFilter.replaceAll([".docx", ".txt", ".html", ".json"]);
+            picker.fileTypeFilter.replaceAll([".html"]);
             const file = await picker.pickSingleFileAsync();
-
             if (file) {
                 const content = await Windows.Storage.FileIO.readTextAsync(file);
                 const appInstance = this.getCurrentAppInstance();
-
-                if (appInstance && typeof appInstance.loadDocument === 'function') {
-                    await appInstance.loadDocument(content, file.name);
-                }
+                    await appInstance.openDocument(content, file.name);
+                
             }
         } catch (error) {
             console.error('Ошибка открытия файла:', error);
@@ -224,29 +174,27 @@ class OfficeSuiteCore {
     }
 
     setupAppBar() {
-        // Динамическое обновление AppBar
         const appBar = document.getElementById('appBar');
+        appBar.setAttribute('data-win-control', 'WinJS.UI.AppBar');
         if (!appBar) {
             console.warn('AppBar не найден');
             return;
         }
-
-        // Очищаем старые кнопки
-        appBar.innerHTML = '';
-
-        // Добавляем общие кнопки
+        //appBar.innerHTML = '';
         const buttons = [
-            { id: 'newFile', label: 'Создать', icon: '📄', command: () => this.newDocument() },
-            { id: 'openFile', label: 'Открыть', icon: '📂', command: () => this.openDocument() },
-            { id: 'saveFile', label: 'Сохранить', icon: '💾', command: () => this.saveDocument() },
-            { id: 'saveAsFile', label: 'Сохранить как', icon: '💾', command: () => this.saveAsDocument() },
-            { id: 'printFile', label: 'Печать', icon: '🖨️', command: () => this.printDocument() }
+            { id: 'newFile', label: 'Создать', command: () => this.newDocument() },
+            { id: 'openFile', label: 'Открыть', command: () => this.openDocument() },
+            { id: 'saveFile', label: 'Сохранить', command: () => this.saveDocument() },
+            { id: 'saveAsFile', label: 'Сохранить как', command: () => this.saveAsDocument() },
+            { id: 'printFile', label: 'Печать', command: () => this.printDocument() }
         ];
 
         buttons.forEach(btn => {
             const button = document.createElement('button');
             button.className = 'win-button';
-            button.innerHTML = `<span>${btn.icon} ${btn.label}</span>`;
+            button.setAttribute('data-win-control', 'WinJS.UI.AppBarCommand');
+            button.setAttribute('data-win-options', `{id:'${btn.id}',label:'${btn.label}',icon:'add'}`);
+            button.innerHTML = `<span>${btn.label}</span>`;
             button.addEventListener('click', btn.command);
             appBar.appendChild(button);
         });
@@ -262,15 +210,12 @@ class OfficeSuiteCore {
     }
 
     showContextMenu(x, y) {
-        // Показываем контекстное меню
         const menu = document.getElementById('contextMenu');
         if (!menu) return;
 
         menu.style.left = `${x}px`;
         menu.style.top = `${y}px`;
         menu.style.display = 'block';
-
-        // Скрываем меню при клике
         const hideMenu = () => {
             menu.style.display = 'none';
             document.removeEventListener('click', hideMenu);
@@ -282,7 +227,6 @@ class OfficeSuiteCore {
     }
 
     updateAppSwitcher() {
-        // Обновляем активную вкладку
         const tabs = document.querySelectorAll('.app-switcher .app-tab');
         tabs.forEach(tab => {
             tab.classList.remove('active');
@@ -290,8 +234,6 @@ class OfficeSuiteCore {
                 tab.classList.add('active');
             }
         });
-
-        // Обновляем заголовок
         const appTitles = {
             'word-processor': 'Текстовый процессор',
             'spreadsheet': 'Табличный редактор',
@@ -308,7 +250,6 @@ class OfficeSuiteCore {
     }
 
     async saveAppState() {
-        // Сохраняем состояние текущего приложения
         const appInstance = this.getCurrentAppInstance();
         if (appInstance && typeof appInstance.getState === 'function') {
             const state = appInstance.getState();
@@ -346,7 +287,6 @@ class OfficeSuiteCore {
 
     showMessage(text) {
         console.log('Сообщение:', text);
-        // Простая реализация показа сообщения
         alert(text);
     }
 
@@ -355,8 +295,6 @@ class OfficeSuiteCore {
         alert(`Ошибка: ${text}`);
     }
 }
-
-// Менеджер документов
 class DocumentManager {
     constructor() {
         this.documents = new Map();
@@ -364,8 +302,6 @@ class DocumentManager {
 
     async saveState(appName, state) {
         this.documents.set(appName, state);
-
-        // Сохраняем в локальное хранилище
         try {
             const appData = Windows.Storage.ApplicationData.current;
             const localFolder = appData.localFolder;
@@ -394,8 +330,6 @@ class DocumentManager {
         }
     }
 }
-
-// Работа с файловой системой
 class FileSystem {
     async saveFile(content, fileName, fileType) {
         try {
@@ -416,39 +350,28 @@ class FileSystem {
             throw error;
         }
     }
-
-    async openFile(fileTypes) {
-        try {
-            const picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.fileTypeFilter.replaceAll(fileTypes);
-            const file = await picker.pickSingleFileAsync();
-            if (file) {
-                console.log(`Файл открыт: ${file.name}`);
+    async openDocument() {
+        const appInstance = this.getCurrentAppInstance();
+        if (appInstance && typeof appInstance.openDocument === 'function') {
+            try {
+                await appInstance.openDocument();
+            } catch (error) {
+                console.error('Ошибка открытия файла:', error);
+                this.showError('Не удалось открыть файл');
             }
-            return file;
-        } catch (error) {
-            console.error('Ошибка открытия файла:', error);
-            throw error;
+        } else {
         }
     }
 }
-
-// Инициализация приложения
 let officeSuite = null;
-
-// Ждем полной загрузки документа
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM загружен, инициализация OfficeSuite...');
         officeSuite = new OfficeSuiteCore();
         window.officeSuite = officeSuite;
     });
 } else {
-    console.log('DOM уже загружен, инициализация OfficeSuite...');
     officeSuite = new OfficeSuiteCore();
     window.officeSuite = officeSuite;
 }
-
-// Экспортируем для использования в других модулях
 window.DocumentManager = DocumentManager;
 window.FileSystem = FileSystem;

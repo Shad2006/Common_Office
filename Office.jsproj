@@ -69,7 +69,10 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="css\office-common.css" />
+    <Content Include="css\presentation.css" />
     <Content Include="css\publisher.css" />
+    <Content Include="css\table.css" />
+    <Content Include="html\presentation.html" />
     <Content Include="html\publisher.html" />
     <Content Include="html\spreadsheet.html" />
     <Content Include="html\word-processor.html" />

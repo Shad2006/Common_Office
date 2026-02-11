@@ -1,5 +1,4 @@
-﻿// Текстовый процессор
-class WordProcessorApp {
+﻿class WordProcessorApp {
     constructor() {
         this.currentDocument = {
             content: '',
@@ -18,6 +17,8 @@ class WordProcessorApp {
 
         this.editor = null;
         this.isModified = false;
+        this.fileSystem = new FileSystem();
+        this.init();
     }
 
     init() {
@@ -25,8 +26,6 @@ class WordProcessorApp {
         this.setupToolbar();
         this.setupEventListeners();
         this.loadDefaultTemplate();
-
-        console.log('Текстовый процессор инициализирован');
     }
 
     setupEditor() {
@@ -35,23 +34,18 @@ class WordProcessorApp {
             console.error('Элемент редактора не найден');
             return;
         }
-
-        // Настраиваем редактор
         this.editor.style.fontFamily = this.currentDocument.settings.fontFamily;
         this.editor.style.fontSize = `${this.currentDocument.settings.fontSize}pt`;
         this.editor.style.lineHeight = this.currentDocument.settings.lineHeight;
     }
 
     setupToolbar() {
-        // Обработчики для кнопок форматирования
         document.querySelectorAll('[data-command]').forEach(button => {
             button.addEventListener('click', (e) => {
                 const command = e.target.closest('[data-command]').dataset.command;
                 this.execCommand(command);
             });
         });
-
-        // Выбор шрифта
         const fontFamilySelect = document.getElementById('fontFamily');
         if (fontFamilySelect) {
             fontFamilySelect.value = this.currentDocument.settings.fontFamily;
@@ -59,8 +53,6 @@ class WordProcessorApp {
                 this.changeFontFamily(e.target.value);
             });
         }
-
-        // Выбор размера шрифта
         const fontSizeSelect = document.getElementById('fontSize');
         if (fontSizeSelect) {
             fontSizeSelect.value = this.currentDocument.settings.fontSize;
@@ -68,32 +60,24 @@ class WordProcessorApp {
                 this.changeFontSize(e.target.value);
             });
         }
-
-        // Цвет текста
         const textColorInput = document.getElementById('textColor');
         if (textColorInput) {
             textColorInput.addEventListener('change', (e) => {
                 this.execCommand('foreColor', e.target.value);
             });
         }
-
-        // Цвет фона
         const bgColorInput = document.getElementById('backgroundColor');
         if (bgColorInput) {
             bgColorInput.addEventListener('change', (e) => {
                 this.execCommand('backColor', e.target.value);
             });
         }
-
-        // Стили абзацев
         document.querySelectorAll('.style-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 const style = e.target.dataset.style;
                 this.applyStyle(style);
             });
         });
-
-        // Отступы
         ['leftIndent', 'rightIndent', 'firstLineIndent'].forEach(id => {
             const input = document.getElementById(id);
             if (input) {
@@ -103,56 +87,25 @@ class WordProcessorApp {
             }
         });
     }
-
     setupEventListeners() {
-        // Отслеживание изменений
         if (this.editor) {
             this.editor.addEventListener('input', () => {
                 this.isModified = true;
                 this.currentDocument.metadata.modified = new Date();
                 this.updateWordCount();
             });
-
-            this.editor.addEventListener('keydown', (e) => {
-                // Сочетания клавиш
-                if (e.ctrlKey) {
-                    switch (e.key.toLowerCase()) {
-                        case 'b':
-                            e.preventDefault();
-                            this.execCommand('bold');
-                            break;
-                        case 'i':
-                            e.preventDefault();
-                            this.execCommand('italic');
-                            break;
-                        case 'u':
-                            e.preventDefault();
-                            this.execCommand('underline');
-                            break;
-                        case 's':
-                            e.preventDefault();
-                            this.saveDocument();
-                            break;
-                    }
-                }
-            });
         }
-
-        // Кнопки файловых операций
+        
         ['newDocument', 'openDocument', 'saveDocument', 'saveAsDocument'].forEach(id => {
             const button = document.getElementById(id);
             if (button) {
                 button.addEventListener('click', () => this[id]());
             }
         });
-
-        // Вставка таблицы
         const insertTableBtn = document.getElementById('insertTable');
         if (insertTableBtn) {
             insertTableBtn.addEventListener('click', () => this.insertTable());
         }
-
-        // Вставка изображения
         const insertImageBtn = document.getElementById('insertImage');
         if (insertImageBtn) {
             insertImageBtn.addEventListener('click', () => this.insertImage());
@@ -175,13 +128,10 @@ class WordProcessorApp {
         document.execCommand(command, false, value);
         this.editor.focus();
         this.isModified = true;
-
-        // Обновление состояния кнопок
         this.updateToolbarState();
     }
 
     updateToolbarState() {
-        // Обновляем состояние кнопок форматирования
         const commands = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
         commands.forEach(command => {
             const button = document.querySelector(`[data-command="${command}"]`);
@@ -275,30 +225,63 @@ class WordProcessorApp {
         console.log('Создан новый документ');
     }
 
-    async openDocument() {
+    async openDocument(content = null, fileName = null) {
         try {
-            const file = await officeSuite.fileSystem.openFile(['.txt', '.html', '.docx']);
-            if (file) {
-                const content = await Windows.Storage.FileIO.readTextAsync(file);
+            let fileContent = content;
+            let file = null;
+            if (!content) {
+                const picker = new Windows.Storage.Pickers.FileOpenPicker();
+                picker.fileTypeFilter.replaceAll(['.txt', '.html', '.docx', '.rtf']);
+                file = await picker.pickSingleFileAsync();
+                if (!file) return;
 
-                // Парсим содержимое в зависимости от типа файла
-                if (file.name.endsWith('.html')) {
-                    this.editor.innerHTML = content;
+                fileContent = await Windows.Storage.FileIO.readTextAsync(file);
+                fileName = file.name;
+            }
+            if (this.editor) {
+                if (fileName && fileName.endsWith('.html')) {
+                    fileContent = this.sanitizeHTML(fileContent);
+                    this.editor.innerHTML = fileContent;
                 } else {
-                    this.editor.textContent = content;
+                    this.editor.textContent = fileContent;
                 }
-
-                this.currentDocument.content = content;
-                this.currentDocument.metadata.title = file.name;
-                this.currentDocument.metadata.modified = file.dateModified;
+                this.currentDocument.content = fileContent;
+                this.currentDocument.metadata.title = fileName || 'Открытый документ';
+                this.currentDocument.metadata.modified = new Date();
                 this.isModified = false;
+                this.editor.focus();
 
                 this.updateWordCount();
-                console.log('Документ загружен:', file.name);
             }
         } catch (error) {
             console.error('Ошибка открытия документа:', error);
+            throw error;
         }
+    }
+
+    sanitizeHTML(html) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        tempDiv.querySelectorAll('style, link, script, meta, base').forEach(el => el.remove());
+        tempDiv.querySelectorAll('*[style]').forEach(el => {
+            el.removeAttribute('style');
+        });
+        tempDiv.querySelectorAll('*[class]').forEach(el => {
+            el.removeAttribute('class');
+        });
+
+        tempDiv.querySelectorAll('*[id]').forEach(el => {
+            el.removeAttribute('id');
+        });
+        tempDiv.querySelectorAll('html, head, body').forEach(el => {
+            const div = document.createElement('div');
+            while (el.firstChild) {
+                div.appendChild(el.firstChild);
+            }
+            el.parentNode.replaceChild(div, el);
+        });
+
+        return tempDiv.innerHTML;
     }
 
     async saveDocument(saveAs = false) {
@@ -319,13 +302,14 @@ class WordProcessorApp {
 
     insertTable() {
         if (!this.editor) return;
-
+        /*
         const rows = prompt('Количество строк:', '3');
         const cols = prompt('Количество столбцов:', '3');
-
+        */
+        let rows = 3;
+        let cols = 3;
         if (rows && cols) {
             let tableHTML = '<table border="1" style="border-collapse: collapse; width: 100%;">';
-
             for (let i = 0; i < rows; i++) {
                 tableHTML += '<tr>';
                 for (let j = 0; j < cols; j++) {
@@ -333,19 +317,15 @@ class WordProcessorApp {
                 }
                 tableHTML += '</tr>';
             }
-
             tableHTML += '</table>';
-
             this.execCommand('insertHTML', tableHTML);
         }
     }
-
     async insertImage() {
         try {
             const picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.fileTypeFilter.replaceAll(['.jpg', '.jpeg', '.png', '.gif']);
-            picker.suggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.picturesLibrary;
-
+            //picker.suggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.picturesLibrary;
             const file = await picker.pickSingleFileAsync();
             if (file) {
                 const imgHTML = `<img src="${URL.createObjectURL(file)}" style="max-width: 100%;" alt="${file.name}">`;
@@ -355,15 +335,12 @@ class WordProcessorApp {
             console.error('Ошибка вставки изображения:', error);
         }
     }
-
     updateWordCount() {
         if (!this.editor) return;
 
         const text = this.editor.textContent || this.editor.innerText;
         const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
         const chars = text.length;
-
-        // Обновляем счетчик слов (если есть такой элемент)
         const wordCountElement = document.getElementById('wordCount');
         if (wordCountElement) {
             wordCountElement.textContent = `Слов: ${words}, Символов: ${chars}`;
@@ -379,5 +356,6 @@ class WordProcessorApp {
         };
     }
 }
-
-window.wordProcessorApp = new WordProcessorApp();
+if (typeof window.wordProcessorApp === 'undefined') {
+    window.wordProcessorApp = new WordProcessorApp();
+}
